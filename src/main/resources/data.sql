@@ -32,15 +32,15 @@ VALUES (1, 1, 'https://cdn.example.com/images/at-tron/1.jpg', 1),
        (11, 8, 'https://cdn.example.com/images/jean-skinny/1.jpg', 1);
 
 INSERT INTO product_skus (id, sku_code, size, color, price, stock_quantity, reserved_quantity, product_id)
-VALUES (1, 'AT-TRON-M-DEN', 'M', 'BLACK', 199000.00, 5, 3, 1),
-       (2, 'AT-TRON-M-TRANG', 'M', 'WHITE', 199000.00, 100, 5, 1),
-       (3, 'AT-TRON-M-XANH', 'M', 'BLUE', 199000.00, 100, 5, 1),
+VALUES (1, 'AT-TRON-M-DEN', 'M', 'BLACK', 199000.00, 5, 0, 1),
+       (2, 'AT-TRON-M-TRANG', 'M', 'WHITE', 199000.00, 100, 0, 1),
+       (3, 'AT-TRON-M-XANH', 'M', 'BLUE', 199000.00, 100, 0, 1),
        (4, 'AT-TRON-L-TRANG', 'L', 'WHITE', 199000.00, 80, 0, 1),
        (5, 'AT-TRON-XL-XANH', 'XL', 'BLUE', 209000.00, 60, 0, 1),
-       (6, 'HD-NI-M-DEN', 'M', 'BLACK', 349000.00, 50, 2, 2),
+       (6, 'HD-NI-M-DEN', 'M', 'BLACK', 349000.00, 50, 0, 2),
        (7, 'HD-NI-L-TRANG', 'L', 'WHITE', 359000.00, 40, 0, 2),
        (8, 'HD-NI-L-DEN', 'L', 'BLACK', 359000.00, 40, 0, 2),
-       (9, 'QJ-SLIM-32-XANH', 'L', 'BLUE', 399000.00, 70, 1, 3),
+       (9, 'QJ-SLIM-32-XANH', 'L', 'BLUE', 399000.00, 70, 0, 3),
        (10, 'QJ-SLIM-34-DEN', 'XL', 'BLACK', 409000.00, 55, 0, 3),
        (11, 'AT-CROP-S-HONG', 'S', 'PINK', 179000.00, 80, 0, 4),
        (12, 'AT-CROP-M-HONG', 'M', 'PINK', 179000.00, 70, 0, 4),
@@ -54,30 +54,3 @@ VALUES (1, 'AT-TRON-M-DEN', 'M', 'BLACK', 199000.00, 5, 3, 1),
        (20, 'QJ-SKIN-S-DEN', 'S', 'BLACK', 339000.00, 75, 0, 8),
        (21, 'QJ-SKIN-M-DEN', 'M', 'BLACK', 339000.00, 70, 0, 8);
 
-INSERT INTO carts (id, cart_token)
-VALUES (1, 'cart_abc123'),
-       (2, 'cart_xyz789');
-
-INSERT INTO cart_items (id, cart_id, sku_id, quantity)
-VALUES (1, 1, 1, 2),
-       (2, 1, 5, 1),
-       (3, 2, 6, 1);
-
-INSERT INTO orders (id, order_code, customer_name, customer_phone, customer_email, shipping_address, status,
-                    payment_method, total_amount, tracking_token)
-VALUES (1, 'DH0001', 'Nguyễn Văn A', '0901234567', 'nguyenvana@example.com',
-        'Số 12, Đường Hoa Cúc, Q.Phú Nhuận, TP.HCM', 'PAID', 'COD', 757000.00, 'TRK-0001-XYZ'),
-       (2, 'DH0002', 'Trần Thị B', '0912345678', 'tranthib@example.com', 'Số 45, Ngõ 2, Cầu Giấy, Hà Nội', 'PROCESSING',
-        'SEPAY', 608000.00, 'TRK-0002-XYZ');
-
-INSERT INTO order_items (id, order_id, sku_id, quantity, price)
-VALUES (1, 1, 1, 2, 199000.00),
-       (2, 1, 5, 1, 359000.00),
-       (3, 2, 2, 2, 199000.00),
-       (4, 2, 6, 1, 210000.00);
-
-INSERT INTO inventory_reservations (id, order_id, sku_id, quantity, expires_at)
-VALUES (1, 1, 1, 2, '2026-01-08 19:20:00'),
-       (2, 1, 5, 1, '2026-01-08 19:20:00'),
-       (3, 2, 2, 2, '2026-01-08 19:30:00'),
-       (4, 2, 6, 1, '2026-01-08 19:30:00');

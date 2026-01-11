@@ -26,15 +26,10 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
 
     @Override
-    public ListResponse<ProductItemResponse> getProducts(String categorySlug,
-                                                         BigDecimal minPrice,
-                                                         BigDecimal maxPrice,
-                                                         int page, int size) {
-
+    public ListResponse<ProductItemResponse> getProducts(String categorySlug, BigDecimal minPrice,
+                                                         BigDecimal maxPrice, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-
         Page<ProductItemResponse> pageData = productRepository.findProductList(categorySlug, minPrice, maxPrice, pageable);
-
         return new ListResponse<>(
                 pageData.getContent(),
                 pageData.getNumber(),
