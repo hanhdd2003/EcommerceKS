@@ -61,7 +61,7 @@ public class ProductSku {
         updatedAt = LocalDateTime.now();
     }
 
-    /* Helper method */
+    // lấy số sản phẩm có thể dùng
     public int getAvailableStock() {
         return stockQuantity - reservedQuantity;
     }

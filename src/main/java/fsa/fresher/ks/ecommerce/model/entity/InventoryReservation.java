@@ -39,6 +39,5 @@ public class InventoryReservation {
     @PrePersist
     public void prePersist() {
         createdAt = LocalDateTime.now();
-        expiresAt = createdAt.plusMinutes(10);
     }
 }

@@ -5,7 +5,10 @@ public enum Color {
     WHITE("Trắng"),
     RED("Đỏ"),
     BLUE("Xanh"),
-    GREEN("Xanh lá");
+    GREEN("Xanh lá"),
+    PINK("Hồng"),
+    PURPLE("Tím"),
+    GRAY("Xám");
 
     private final String displayName;
 
