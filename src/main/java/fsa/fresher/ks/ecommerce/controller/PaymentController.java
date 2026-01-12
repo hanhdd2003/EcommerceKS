@@ -41,24 +41,6 @@ public class PaymentController {
 
         if ("SUCCESS".equalsIgnoreCase(webhook.getStatus())) {
             // Thanh toán thành công
-            // Kiểm tra stock trước khi confirm PAID
-            boolean stockAvailable = true;
-            for (OrderItem item : order.getItems()) {
-                ProductSku sku = skuRepository.findByIdForUpdate(item.getSku().getId())
-                        .orElseThrow(() -> new ResourceNotFoundException("SKU không tồn tại"));
-                if (sku.getAvailableStock() < item.getQuantity()) {
-                    stockAvailable = false;
-                    break;
-                }
-            }
-
-            if (!stockAvailable) {
-                // Nếu không đủ hàng, giữ order ở trạng thái PENDING_PAYMENT hoặc INVENTORY_FAILED
-                order.setStatus(OrderStatus.PAYMENT_FAILED);
-                orderRepository.save(order);
-                return ResponseEntity.ok("Thanh toán thành công nhưng hàng không đủ trong kho. Admin cần xử lý.");
-            }
-
             // Giảm stock và release reservation
             for (OrderItem item : order.getItems()) {
                 ProductSku sku = skuRepository.findByIdForUpdate(item.getSku().getId())
