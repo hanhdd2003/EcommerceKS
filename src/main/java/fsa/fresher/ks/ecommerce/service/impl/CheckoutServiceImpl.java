@@ -119,7 +119,7 @@ public class CheckoutServiceImpl implements CheckoutService {
             // COD → không expire, SEPAY → expire 15 phút
             reservation.setExpiresAt(expireAt != null
                     ? expireAt
-                    : LocalDateTime.of(9999, 12, 31, 23, 59, 59)); // hợp lệ với MySQL DATETIME
+                    : LocalDateTime.of(9999, 12, 31, 23, 59, 59));
 
             reservationRepository.save(reservation);
         }
