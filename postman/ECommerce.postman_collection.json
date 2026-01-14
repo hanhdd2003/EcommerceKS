@@ -8,7 +8,7 @@
 	},
 	"item": [
 		{
-			"name": "get product",
+			"name": "get product simp",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
@@ -25,13 +25,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{BASE_URL}}/api/products?page=0&size=10",
+					"raw": "{{BASE_URL}}/api/products/simp?page=0&size=10&category=ao-thun",
 					"host": [
 						"{{BASE_URL}}"
 					],
 					"path": [
 						"api",
-						"products"
+						"products",
+						"simp"
 					],
 					"query": [
 						{
@@ -44,8 +45,61 @@
 						},
 						{
 							"key": "category",
-							"value": "ao-thun",
+							"value": "ao-thun"
+						},
+						{
+							"key": "minPrice",
+							"value": "100000",
 							"disabled": true
+						},
+						{
+							"key": "maxPrice",
+							"value": "300000",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get product use spec",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/api/products?page=0&size=10&category=ao-thun",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"api",
+						"products"
+					],
+					"query": [
+						{
+							"key": "search",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						},
+						{
+							"key": "category",
+							"value": "ao-thun"
 						},
 						{
 							"key": "minPrice",
@@ -269,7 +323,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"cartToken\": \"123456\",\r\n    \"customerName\" : \"Đỗ Đức Hanh\",\r\n    \"customerPhone\" : \"0387006149\",\r\n    \"customerEmail\" : \"hanhngulao66@gmail.com\",\r\n    \"shippingAddress\" : \"xã Hạ Bằng, Hà Nội\",\r\n    \"paymentMethod\" : \"SEPAY\"\r\n}",
+					"raw": "{\r\n    \"cartToken\": \"12345\",\r\n    \"customerName\" : \"Đỗ Đức Hanh\",\r\n    \"customerPhone\" : \"0387006149\",\r\n    \"customerEmail\" : \"hanhngulao66@gmail.com\",\r\n    \"shippingAddress\" : \"xã Hạ Bằng, Hà Nội\",\r\n    \"paymentMethod\" : \"SEPAY\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -408,7 +462,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"status\" : \"CANCELLED\"\r\n}",
+					"raw": "{\r\n    \"status\" : \"SHIPPED\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"

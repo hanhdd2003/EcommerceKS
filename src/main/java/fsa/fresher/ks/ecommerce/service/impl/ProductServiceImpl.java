@@ -8,15 +8,18 @@ import fsa.fresher.ks.ecommerce.model.dto.response.ListResponse;
 import fsa.fresher.ks.ecommerce.model.entity.Product;
 import fsa.fresher.ks.ecommerce.repository.ProductRepository;
 import fsa.fresher.ks.ecommerce.service.ProductService;
+import fsa.fresher.ks.ecommerce.specification.ProductSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +35,43 @@ public class ProductServiceImpl implements ProductService {
         Page<ProductItemResponse> pageData = productRepository.findProductList(categorySlug, minPrice, maxPrice, pageable);
         return new ListResponse<>(
                 pageData.getContent(),
+                pageData.getNumber(),
+                pageData.getSize(),
+                pageData.getTotalElements(),
+                pageData.getTotalPages()
+        );
+    }
+
+    @Override
+    public ListResponse<ProductItemResponse> getProductsWithSpec(String search, String categorySlug, BigDecimal minPrice, BigDecimal maxPrice, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        Specification<Product> spec = (root, query, criteriaBuilder) -> null;
+
+        if (search != null && !search.isEmpty()) {
+            spec = spec.and(ProductSpecification.hasSearch(search));
+        }
+
+        if (categorySlug != null && !categorySlug.isEmpty()) {
+            spec = spec.and(ProductSpecification.hasCategorySlug(categorySlug));
+        }
+
+        if (minPrice != null) {
+            spec = spec.and(ProductSpecification.hasPriceGreaterThanOrEqualTo(minPrice));
+        }
+
+        if (maxPrice != null) {
+            spec = spec.and(ProductSpecification.hasPriceLessThanOrEqualTo(maxPrice));
+        }
+
+        Page<Product> pageData = productRepository.findAll(spec, pageable);
+
+        List<ProductItemResponse> content = pageData.getContent().stream()
+                .map(MappingDto::productToItemResponse)
+                .toList();
+
+        return new ListResponse<>(
+                content,
                 pageData.getNumber(),
                 pageData.getSize(),
                 pageData.getTotalElements(),

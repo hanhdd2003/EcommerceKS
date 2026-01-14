@@ -10,5 +10,7 @@ public interface ProductService {
 
     ListResponse<ProductItemResponse> getProducts(String categorySlug, BigDecimal minPrice, BigDecimal maxPrice, int page, int size);
 
+    ListResponse<ProductItemResponse> getProductsWithSpec(String search, String categorySlug, BigDecimal minPrice, BigDecimal maxPrice, int page, int size);
+
     ProductDetailResponse getProductDetail(Long id);
 }

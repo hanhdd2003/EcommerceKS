@@ -16,13 +16,23 @@ public class ProductController {
 
     private final ProductService productService;
 
-    @GetMapping()
+    @GetMapping("/simp")
     public ListResponse<ProductItemResponse> getProducts(@RequestParam(value = "category", required = false) String category,
                                                          @RequestParam(required = false) BigDecimal minPrice,
                                                          @RequestParam(required = false) BigDecimal maxPrice,
                                                          @RequestParam(defaultValue = "0") int page,
                                                          @RequestParam(defaultValue = "10") int size) {
         return productService.getProducts(category, minPrice, maxPrice, page, size);
+    }
+
+    @GetMapping()
+    public ListResponse<ProductItemResponse> getProductsWithSpec(@RequestParam(required = false) String search,
+                                                                 @RequestParam(value = "category", required = false) String category,
+                                                                 @RequestParam(required = false) BigDecimal minPrice,
+                                                                 @RequestParam(required = false) BigDecimal maxPrice,
+                                                                 @RequestParam(defaultValue = "0") int page,
+                                                                 @RequestParam(defaultValue = "10") int size) {
+        return productService.getProductsWithSpec(search, category, minPrice, maxPrice, page, size);
     }
 
 
