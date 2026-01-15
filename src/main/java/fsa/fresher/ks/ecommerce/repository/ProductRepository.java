@@ -34,9 +34,9 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
                 join p.skus s
                 left join p.images i
                 where (:categorySlug is null or c.slug = :categorySlug)
-                  and (:minPrice is null or s.price >= :minPrice)
-                  and (:maxPrice is null or s.price <= :maxPrice)
                 group by p.id, p.name, p.description, c.name, c.slug, p.videoUrl
+                having (:minPrice is null or min(s.price) >= :minPrice)
+                  and (:maxPrice is null or max(s.price) <= :maxPrice)
             """)
     Page<ProductItemResponse> findProductList(String categorySlug,
                                               BigDecimal minPrice,

@@ -21,7 +21,6 @@ public class MailServiceImpl implements MailService {
     @Override
     @Async
     public void sendOrderConfirmation(Order order) {
-        // Refetch order with items to avoid LazyInitialization in async thread
         Order fullOrder = orderRepository.findByIdWithItems(order.getId()).orElse(order);
 
         StringBuilder itemsSection = new StringBuilder();

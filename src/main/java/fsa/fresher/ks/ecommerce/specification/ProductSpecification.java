@@ -26,9 +26,16 @@ public class ProductSpecification {
             if (minPrice == null) {
                 return null;
             }
-            Join<Product, ProductSku> skuJoin = root.join("skus", JoinType.INNER);
-            query.distinct(true);
-            return criteriaBuilder.greaterThanOrEqualTo(skuJoin.get("price"), minPrice);
+            
+            // Use a subquery to find products where MIN(price) >= minPrice
+            var subquery = query.subquery(Long.class);
+            var subRoot = subquery.from(Product.class);
+            var subSkuJoin = subRoot.join("skus", JoinType.INNER);
+            subquery.select(subRoot.get("id"));
+            subquery.groupBy(subRoot.get("id"));
+            subquery.having(criteriaBuilder.greaterThanOrEqualTo(criteriaBuilder.min(subSkuJoin.get("price")), minPrice));
+            
+            return root.get("id").in(subquery);
         };
     }
 
@@ -37,9 +44,15 @@ public class ProductSpecification {
             if (maxPrice == null) {
                 return null;
             }
-            Join<Product, ProductSku> skuJoin = root.join("skus", JoinType.INNER);
-            query.distinct(true);
-            return criteriaBuilder.lessThanOrEqualTo(skuJoin.get("price"), maxPrice);
+            
+            var subquery = query.subquery(Long.class);
+            var subRoot = subquery.from(Product.class);
+            var subSkuJoin = subRoot.join("skus", JoinType.INNER);
+            subquery.select(subRoot.get("id"));
+            subquery.groupBy(subRoot.get("id"));
+            subquery.having(criteriaBuilder.lessThanOrEqualTo(criteriaBuilder.max(subSkuJoin.get("price")), maxPrice));
+            
+            return root.get("id").in(subquery);
         };
     }
 
