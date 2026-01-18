@@ -110,7 +110,7 @@ Timezone: Asia/Ho_Chi_Minh (cấu hình Jackson/Hibernate).
 ### Luồng nghiệp vụ chính
 
 1) Cart
-- Khách hàng tương tác bằng header `Cart-Token` (một giá trị tùy ý phía client giữ cố định).
+- Khách hàng tương tác bằng header `Cart-Token` (một giá trị tùy ý phía client tự generic nếu chưa có, giữ cố định).
 - Thêm/Xóa/Đổi số lượng dựa trên `skuId`.
 
 2) Checkout
