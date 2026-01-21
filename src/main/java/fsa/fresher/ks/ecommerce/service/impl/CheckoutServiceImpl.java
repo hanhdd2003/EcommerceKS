@@ -7,10 +7,7 @@ import fsa.fresher.ks.ecommerce.model.dto.response.CheckoutResponseDTO;
 import fsa.fresher.ks.ecommerce.model.entity.*;
 import fsa.fresher.ks.ecommerce.model.enums.OrderStatus;
 import fsa.fresher.ks.ecommerce.model.enums.PaymentMethod;
-import fsa.fresher.ks.ecommerce.repository.CartRepository;
-import fsa.fresher.ks.ecommerce.repository.InventoryReservationRepository;
-import fsa.fresher.ks.ecommerce.repository.OrderRepository;
-import fsa.fresher.ks.ecommerce.repository.ProductSkuRepository;
+import fsa.fresher.ks.ecommerce.repository.*;
 import fsa.fresher.ks.ecommerce.service.CheckoutService;
 import fsa.fresher.ks.ecommerce.service.MailService;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +30,7 @@ public class CheckoutServiceImpl implements CheckoutService {
     private final OrderRepository orderRepository;
     private final InventoryReservationRepository reservationRepository;
     private final MailService mailService;
+    private final CartReservationRepository cartReservationRepository;
 
 
     @Override
@@ -74,12 +72,12 @@ public class CheckoutServiceImpl implements CheckoutService {
         orderRepository.save(order);
 
         if (request.getPaymentMethod() == PaymentMethod.COD) {
-            reserveStock(order, cart.getItems(), null);
+            reserveForCheckout(order, cart, cart.getItems(), null);
             order.setStatus(OrderStatus.PROCESSING);
             mailService.sendOrderConfirmation(order);
         } else {
             LocalDateTime expireAt = LocalDateTime.now().plusMinutes(15);
-            reserveStock(order, cart.getItems(), expireAt);
+            reserveForCheckout(order, cart, cart.getItems(), expireAt);
             order.setStatus(OrderStatus.PENDING_PAYMENT);
         }
 
@@ -94,36 +92,67 @@ public class CheckoutServiceImpl implements CheckoutService {
 
 
     @Transactional
-    protected void reserveStock(Order order, List<CartItem> items, LocalDateTime expireAt) {
+    protected void reserveForCheckout(
+            Order order,
+            Cart cart,
+            List<CartItem> items,
+            LocalDateTime expireAt
+    ) {
         for (CartItem item : items) {
-            // Lock SKU để tránh race condition
-            ProductSku sku = skuRepository.findByIdForUpdate(item.getSku().getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy SKU " + item.getSku().getSkuCode()));
 
-            // Kiểm tra đủ stock
-            if (sku.getAvailableStock() < item.getQuantity()) {
-                throw new RuntimeException("Sản phẩm " + sku.getProduct().getName() + " - " +
-                        sku.getSize().getDisplayName() + " - " + sku.getColor().getDisplayName() + " đã hết hàng");
+            ProductSku sku = skuRepository
+                    .findByIdForUpdate(item.getSku().getId())
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException("SKU không tồn tại"));
+
+            int quantity = item.getQuantity();
+
+            CartReservation cartReservation =
+                    cartReservationRepository.findByCartAndSku(cart, sku).orElse(null);
+
+            if (cartReservation != null) {
+                // ===== CASE 1: CÒN GIỮ CART =====
+                if (cartReservation.getQuantity() < quantity) {
+                    throw new BadRequestException("Số lượng giữ không đủ");
+                }
+
+                sku.setCartReservedQuantity(
+                        sku.getCartReservedQuantity() - quantity
+                );
+                sku.setReservedQuantity(
+                        sku.getReservedQuantity() + quantity
+                );
+
+                cartReservationRepository.delete(cartReservation);
+
+            } else {
+                // ===== CASE 2: HẾT GIỮ, GIỮ TỪ KHO =====
+                if (sku.getAvailableStock() < quantity) {
+                    throw new BadRequestException("Sản phẩm đã hết hàng");
+                }
+
+                sku.setReservedQuantity(
+                        sku.getReservedQuantity() + quantity
+                );
             }
 
-            // Tăng reservedQuantity
-            sku.setReservedQuantity(sku.getReservedQuantity() + item.getQuantity());
             skuRepository.save(sku);
 
-            // Tạo InventoryReservation
-            InventoryReservation reservation = new InventoryReservation();
-            reservation.setOrder(order);
-            reservation.setSku(sku);
-            reservation.setQuantity(item.getQuantity());
+            // ===== TẠO INVENTORY RESERVATION =====
+            InventoryReservation ir = new InventoryReservation();
+            ir.setOrder(order);
+            ir.setSku(sku);
+            ir.setQuantity(quantity);
+            ir.setExpiresAt(
+                    expireAt != null
+                            ? expireAt
+                            : LocalDateTime.of(9999, 12, 31, 23, 59, 59)
+            );
 
-            // COD → không expire, SEPAY → expire 15 phút
-            reservation.setExpiresAt(expireAt != null
-                    ? expireAt
-                    : LocalDateTime.of(9999, 12, 31, 23, 59, 59));
-
-            reservationRepository.save(reservation);
+            reservationRepository.save(ir);
         }
     }
+
 
 
     @Override

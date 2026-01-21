@@ -41,6 +41,9 @@ public class ProductSku {
     private Integer stockQuantity;
 
     @Column(nullable = false)
+    private int cartReservedQuantity = 0;
+
+    @Column(nullable = false)
     private Integer reservedQuantity = 0;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -63,6 +66,8 @@ public class ProductSku {
 
     // lấy số sản phẩm có thể dùng
     public int getAvailableStock() {
-        return stockQuantity - reservedQuantity;
+        return stockQuantity
+                - reservedQuantity
+                - cartReservedQuantity;
     }
 }

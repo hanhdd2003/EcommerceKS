@@ -8,7 +8,7 @@ import fsa.fresher.ks.ecommerce.model.dto.response.ListResponse;
 import fsa.fresher.ks.ecommerce.model.entity.Product;
 import fsa.fresher.ks.ecommerce.repository.ProductRepository;
 import fsa.fresher.ks.ecommerce.service.ProductService;
-import fsa.fresher.ks.ecommerce.specification.ProductSpecification;
+import fsa.fresher.ks.ecommerce.repository.specification.ProductSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

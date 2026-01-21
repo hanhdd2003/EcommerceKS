@@ -11,5 +11,7 @@ public interface CartService {
     CartResponseDTO removeItem(String cartToken, Long skuId);
 
     CartResponseDTO getCart(String cartToken);
+
+    void releaseExpiredCartReservations();
 }
 

@@ -1,4 +1,4 @@
-package fsa.fresher.ks.ecommerce.specification;
+package fsa.fresher.ks.ecommerce.repository.specification;
 
 import fsa.fresher.ks.ecommerce.model.entity.Category;
 import fsa.fresher.ks.ecommerce.model.entity.Product;
